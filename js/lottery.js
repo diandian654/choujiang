@@ -210,7 +210,7 @@ class LotteryManager {
     }
     
     /**
-     * 显示刮刮乐卡片
+     * 显示自动开奖卡片
      */
     showScratchCard() {
         const wrapper = document.getElementById('scratch-wrapper');
@@ -219,21 +219,168 @@ class LotteryManager {
         const statusText = document.getElementById('lottery-status');
         
         if (wrapper && canvas && startBtn && statusText) {
-            // 隐藏开始按钮，显示刮刮乐
+            // 隐藏开始按钮，显示开奖区域
             startBtn.style.display = 'none';
             wrapper.style.display = 'block';
-            statusText.textContent = '刮开卡片，看看你的运气！';
+            statusText.textContent = '正在开奖，请稍候...';
             
-            // 创建刮刮乐实例
-            if (window.ScratchCard) {
-                const scratchCard = new window.ScratchCard(canvas, this.currentPrize, (prize) => {
+            // 创建自动开奖实例
+            if (window.AutoRevealCard) {
+                const autoReveal = new window.AutoRevealCard(canvas, this.currentPrize, (prize) => {
                     this.onScratchComplete(prize);
                 });
-                scratchCard.init();
+                autoReveal.init();
             } else {
-                // 如果刮刮乐组件未加载，直接显示结果
-                this.onScratchComplete(this.currentPrize);
+                // 如果自动开奖组件未加载，2秒后直接显示结果
+                this.startCountdownAndReveal();
             }
+        }
+    }
+    
+    /**
+     * 开始倒计时并自动开奖
+     */
+    startCountdownAndReveal() {
+        const wrapper = document.getElementById('scratch-wrapper');
+        const canvas = document.getElementById('scratch-canvas');
+        const statusText = document.getElementById('lottery-status');
+        
+        if (!wrapper || !canvas || !statusText) return;
+        
+        // 创建倒计时显示
+        let countdown = 2;
+        statusText.textContent = `正在开奖... ${countdown}`;
+        
+        const countdownInterval = setInterval(() => {
+            countdown--;
+            if (countdown > 0) {
+                statusText.textContent = `正在开奖... ${countdown}`;
+            } else {
+                clearInterval(countdownInterval);
+                statusText.textContent = '开奖揭晓！';
+                this.showPrizeResult(this.currentPrize);
+                this.saveToHistory(this.currentPrize);
+            }
+        }, 1000);
+        
+        // 添加动画效果
+        this.addRevealAnimation(canvas);
+    }
+    
+    /**
+     * 添加开奖动画效果
+     * @param {HTMLElement} canvas - Canvas元素
+     */
+    addRevealAnimation(canvas) {
+        const ctx = canvas.getContext('2d');
+        const dpr = window.devicePixelRatio || 1;
+        const width = canvas.width / dpr;
+        const height = canvas.height / dpr;
+        
+        // 绘制动画背景
+        let animationFrame = 0;
+        const maxFrames = 120; // 2秒，60fps
+        
+        const animate = () => {
+            if (animationFrame >= maxFrames) {
+                // 动画结束，显示结果
+                this.drawPrizeBackground(ctx, width, height, this.currentPrize);
+                return;
+            }
+            
+            // 清除画布
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            
+            // 绘制进度背景
+            const progress = animationFrame / maxFrames;
+            this.drawAnimatedBackground(ctx, width, height, progress);
+            
+            animationFrame++;
+            requestAnimationFrame(animate);
+        };
+        
+        animate();
+    }
+    
+    /**
+     * 绘制动画背景
+     * @param {CanvasRenderingContext2D} ctx - Canvas上下文
+     * @param {number} width - 宽度
+     * @param {number} height - 高度
+     * @param {number} progress - 进度(0-1)
+     */
+    drawAnimatedBackground(ctx, width, height, progress) {
+        // 创建渐变背景
+        const gradient = ctx.createLinearGradient(0, 0, width, height);
+        const hue = (progress * 360) % 360;
+        gradient.addColorStop(0, `hsl(${hue}, 70%, 60%)`);
+        gradient.addColorStop(1, `hsl(${(hue + 60) % 360}, 70%, 50%)`);
+        
+        ctx.fillStyle = gradient;
+        ctx.fillRect(0, 0, width, height);
+        
+        // 添加旋转的圆圈动画
+        const centerX = width / 2;
+        const centerY = height / 2;
+        const radius = 50 + progress * 30;
+        
+        for (let i = 0; i < 3; i++) {
+            const angle = (progress * Math.PI * 2) + (i * Math.PI * 2 / 3);
+            const x = centerX + Math.cos(angle) * radius;
+            const y = centerY + Math.sin(angle) * radius;
+            
+            ctx.beginPath();
+            ctx.arc(x, y, 20 - i * 5, 0, Math.PI * 2);
+            ctx.fillStyle = `rgba(255, 255, 255, ${0.3 - i * 0.1})`;
+            ctx.fill();
+        }
+        
+        // 添加闪烁效果
+        if (progress > 0.8) {
+            const opacity = (Math.random() * 0.5 + 0.5) * (progress - 0.8) * 5;
+            ctx.fillStyle = `rgba(255, 255, 255, ${opacity})`;
+            ctx.fillRect(0, 0, width, height);
+        }
+    }
+    
+    /**
+     * 绘制中奖背景
+     * @param {CanvasRenderingContext2D} ctx - Canvas上下文
+     * @param {number} width - 宽度
+     * @param {number} height - 高度
+     * @param {Object} prize - 中奖信息
+     */
+    drawPrizeBackground(ctx, width, height, prize) {
+        // 清除画布
+        ctx.clearRect(0, 0, width * (window.devicePixelRatio || 1), height * (window.devicePixelRatio || 1));
+        
+        // 绘制中奖背景
+        const gradient = ctx.createRadialGradient(width/2, height/2, 0, width/2, height/2, Math.max(width, height)/2);
+        gradient.addColorStop(0, '#FFE082');
+        gradient.addColorStop(1, '#FFD54F');
+        
+        ctx.fillStyle = gradient;
+        ctx.fillRect(0, 0, width, height);
+        
+        // 绘制边框
+        ctx.strokeStyle = '#FF6B35';
+        ctx.lineWidth = 3;
+        ctx.strokeRect(0, 0, width, height);
+        
+        // 绘制中奖文字
+        ctx.fillStyle = '#FF6B35';
+        ctx.font = 'bold 48px Arial';
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        
+        const prizeText = prize.amount === 0 ? '谢谢参与' : `¥${prize.amount}`;
+        ctx.fillText(prizeText, width / 2, height / 2);
+        
+        // 绘制奖品名称
+        if (prize.name && prize.amount > 0) {
+            ctx.font = '20px Arial';
+            ctx.fillStyle = '#666';
+            ctx.fillText(prize.name, width / 2, height / 2 + 40);
         }
     }
     
