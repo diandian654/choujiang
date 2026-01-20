@@ -1,0 +1,77 @@
+/* CSS变量定义 */
+:root {
+  --primary-color: #FF6B35;
+  --secondary-color: #4CAF50;
+  --accent-color: #FFE082;
+  --background-color: #F5F5F5;
+  --text-color: #333333;
+  --border-radius: 12px;
+  --spacing-unit: 1rem;
+}
+
+/* 基础重置样式 */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Arial', sans-serif;
+  background-color: var(--background-color);
+  color: var(--text-color);
+  line-height: 1.6;
+}
+
+/* 移动端优先的基础布局 */
+.container {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+.header {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.header h1 {
+  color: var(--primary-color);
+  font-size: 2.5rem;
+  margin-bottom: 0.5rem;
+  text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+}
+
+.main {
+  min-height: 60vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.footer {
+  text-align: center;
+  margin-top: 2rem;
+  padding: 1rem;
+  font-size: 0.9rem;
+  color: #666;
+}
+
+/* 响应式设计 */
+@media (max-width: 768px) {
+  .container {
+    padding: 10px;
+  }
+  
+  .header h1 {
+    font-size: 2rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .header h1 {
+    font-size: 1.8rem;
+  }
+}

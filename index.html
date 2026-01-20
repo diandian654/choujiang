@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="儿童作业奖励抽奖系统 - 完成作业后的惊喜奖励">
+    <meta name="keywords" content="抽奖,儿童,作业奖励,刮刮乐">
+    <title>儿童作业奖励抽奖系统</title>
+    
+    <!-- CSS样式文件 -->
+    <link rel="stylesheet" href="css/main.css">
+    <link rel="stylesheet" href="css/components.css">
+    
+    <!-- PWA支持 -->
+    <meta name="theme-color" content="#FF6B35">
+    <link rel="manifest" href="manifest.json">
+</head>
+<body>
+    <div class="container">
+        <!-- 页面头部 -->
+        <header class="header">
+            <h1>🎉 作业奖励抽奖 🎁</h1>
+            <p>完成作业，惊喜等你来发现！</p>
+        </header>
+        
+        <!-- 主要内容区域 -->
+        <main class="main">
+            <!-- 抽奖容器 -->
+            <div class="lottery-container">
+                <div class="card">
+                    <h2>开始抽奖</h2>
+                    <p id="lottery-status">准备好接受奖励了吗？</p>
+                    
+                    <!-- 抽奖按钮 -->
+                    <button id="start-lottery" class="btn btn-primary">
+                        开始抽奖
+                    </button>
+                    
+                    <!-- 刮刮乐区域 -->
+                    <div class="scratch-card-wrapper" id="scratch-wrapper" style="display: none;">
+                        <canvas id="scratch-canvas" class="scratch-canvas" width="300" height="200"></canvas>
+                    </div>
+                    
+                    <!-- 中奖结果显示 -->
+                    <div id="prize-result" class="prize-result" style="display: none;">
+                        <h3>🎊 恭喜你！🎊</h3>
+                        <div class="prize-amount" id="prize-amount">¥0</div>
+                        <p>继续加油，下次还有更多惊喜！</p>
+                    </div>
+                    
+                    <!-- 重新抽奖按钮 -->
+                    <button id="restart-lottery" class="btn btn-secondary" style="display: none;">
+                        重新抽奖
+                    </button>
+                </div>
+                
+                <!-- 历史记录区域 -->
+                <div class="card">
+                    <h3>我的抽奖历史</h3>
+                    <div id="history-list" class="history-list">
+                        <p style="color: #999; text-align: center;">暂无抽奖记录</p>
+                    </div>
+                    <button id="clear-history" class="btn btn-secondary" style="display: none;">
+                        清空历史
+                    </button>
+                </div>
+            </div>
+        </main>
+        
+        <!-- 页面底部 -->
+        <footer class="footer">
+            <p id="copyright">© 2024 儿童作业奖励抽奖系统 | 专注学习的快乐时光</p>
+            <p style="font-size: 0.8rem; color: #999; margin-top: 0.5rem;">
+                长按或双击版权文字进入设置
+            </p>
+        </footer>
+    </div>
+    
+    <!-- 作业确认对话框 -->
+    <div id="confirm-modal" class="modal">
+        <div class="modal-content">
+            <h3>📚 确认作业完成</h3>
+            <p>请确认你已经认真完成了今天的作业：</p>
+            <ul style="text-align: left; margin: 1rem 0;">
+                <li>✅ 所有作业都已完成</li>
+                <li>✅ 认真检查了答案</li>
+                <li>✅ 整理好了学习用品</li>
+            </ul>
+            <div class="modal-buttons">
+                <button id="confirm-yes" class="btn btn-primary">我已完成作业</button>
+                <button id="confirm-no" class="btn btn-secondary">再检查一下</button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- 设置面板 -->
+    <div id="settings-panel" class="settings-panel">
+        <div class="settings-header">
+            <h2>⚙️ 抽奖设置</h2>
+        </div>
+        <div class="settings-content">
+            <h3>奖项概率配置</h3>
+            <div id="prize-configs">
+                <!-- 奖项配置将通过JavaScript动态生成 -->
+            </div>
+            <div style="margin-top: 2rem;">
+                <h4>概率总计：<span id="total-probability">100</span>%</h4>
+                <p style="color: #666; font-size: 0.9rem;">
+                    注意：所有奖项概率总和必须等于100%
+                </p>
+            </div>
+            <div class="modal-buttons" style="margin-top: 2rem;">
+                <button id="save-settings" class="btn btn-primary">保存设置</button>
+                <button id="reset-settings" class="btn btn-secondary">重置默认</button>
+                <button id="close-settings" class="btn btn-secondary">返回</button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- JavaScript文件 -->
+    <script src="js/storage.js"></script>
+    <script src="js/config.js"></script>
+    <script src="js/lottery.js"></script>
+    <script src="js/scratch.js"></script>
+    <script src="js/app.js"></script>
+</body>
+</html>
