@@ -148,62 +148,115 @@
 
 /* 设置页面样式 */
 .settings-panel {
-  display: none;
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: white;
-  z-index: 2000;
-  overflow-y: auto;
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: white;
+    z-index: 2000;
+    overflow-y: auto;
 }
 
 .settings-panel.active {
-  display: block;
+    display: block;
 }
 
 .settings-header {
-  background: linear-gradient(135deg, var(--primary-color), #FF8A65);
-  color: white;
-  padding: 1.5rem;
-  position: sticky;
-  top: 0;
-  z-index: 10;
+    background: linear-gradient(135deg, var(--primary-color), #FF8A65);
+    color: white;
+    padding: 1.5rem;
+    position: sticky;
+    top: 0;
+    z-index: 10;
 }
 
 .settings-content {
-  padding: 2rem;
+    padding: 2rem;
 }
 
 .prize-config {
-  margin-bottom: 2rem;
-  padding: 1.5rem;
-  border: 2px solid #E0E0E0;
-  border-radius: var(--border-radius);
+    margin-bottom: 2rem;
+    padding: 1.5rem;
+    border: 2px solid #E0E0E0;
+    border-radius: var(--border-radius);
 }
 
 .prize-label {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 1rem;
-  font-weight: bold;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+    font-weight: bold;
+}
+
+.probability-input-group {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin: 1rem 0;
+}
+
+.probability-input {
+    flex: 1;
+    padding: 0.75rem;
+    border: 2px solid #E0E0E0;
+    border-radius: 8px;
+    font-size: 1.1rem;
+    font-weight: bold;
+    text-align: center;
+    transition: all 0.3s ease;
+    max-width: 120px;
+}
+
+.probability-input:focus {
+    outline: none;
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px rgba(255, 107, 53, 0.1);
+    transform: scale(1.02);
+}
+
+.probability-input:hover {
+    border-color: var(--secondary-color);
+}
+
+.probability-input:invalid {
+    border-color: #F44336;
+}
+
+.probability-unit {
+    font-size: 1.2rem;
+    font-weight: bold;
+    color: var(--primary-color);
+    min-width: 30px;
+}
+
+.probability-hint {
+    text-align: center;
+    margin-top: 0.5rem;
+    font-size: 0.9rem;
+    color: #666;
+}
+
+.probability-hint strong {
+    color: var(--primary-color);
+    font-size: 1.1rem;
 }
 
 .probability-slider {
-  width: 100%;
-  margin: 1rem 0;
+    width: 100%;
+    margin: 1rem 0;
 }
 
 .probability-value {
-  display: inline-block;
-  min-width: 50px;
-  text-align: center;
-  padding: 0.25rem 0.5rem;
-  background: var(--accent-color);
-  border-radius: 20px;
-  font-weight: bold;
+    display: inline-block;
+    min-width: 50px;
+    text-align: center;
+    padding: 0.25rem 0.5rem;
+    background: var(--accent-color);
+    border-radius: 20px;
+    font-weight: bold;
 }
 
 /* 历史记录样式 */

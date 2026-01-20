@@ -428,49 +428,186 @@ class LotteryManager {
                 <div class="prize-config">
                     <div class="prize-label">
                         <span style="color: ${prize.color}">${prize.display}</span>
-                        <span class="probability-value">${prize.probability}%</span>
+                        <div class="probability-input-group">
+                            <input type="number" 
+                                   class="probability-input" 
+                                   data-amount="${prize.amount}"
+                                   min="0" 
+                                   max="100" 
+                                   step="0.5" 
+                                   value="${prize.probability}"
+                                   placeholder="0">
+                            <span class="probability-unit">%</span>
+                        </div>
                     </div>
-                    <input type="range" 
-                           class="probability-slider" 
-                           data-amount="${prize.amount}"
-                           min="0" 
-                           max="100" 
-                           step="0.5" 
-                           value="${prize.probability}">
+                    <div class="probability-hint">
+                        <span>当前: <strong>${prize.probability}%</strong></span>
+                    </div>
                 </div>
             `;
         });
         
         configsContainer.innerHTML = html;
         
-        // 绑定滑块事件
-        this.bindSliderEvents();
+        // 绑定输入框事件
+        this.bindInputEvents();
         this.updateTotalProbability();
     }
     
     /**
-     * 绑定滑块事件
+     * 绑定输入框事件
      */
-    bindSliderEvents() {
-        const sliders = document.querySelectorAll('.probability-slider');
-        sliders.forEach(slider => {
-            slider.addEventListener('input', (e) => {
-                const amount = parseFloat(e.target.dataset.amount);
-                const probability = parseFloat(e.target.value);
-                
-                // 更新显示
-                const valueSpan = e.target.parentElement.querySelector('.probability-value');
-                if (valueSpan) {
-                    valueSpan.textContent = `${probability}%`;
+    bindInputEvents() {
+        const inputs = document.querySelectorAll('.probability-input');
+        
+        inputs.forEach(input => {
+            // 输入时实时更新提示
+            input.addEventListener('input', (e) => {
+                this.handleInputChange(e);
+            });
+            
+            // 失去焦点时验证和保存
+            input.addEventListener('blur', (e) => {
+                this.handleInputBlur(e);
+            });
+            
+            // 键盘事件支持
+            input.addEventListener('keydown', (e) => {
+                if (e.key === 'Enter') {
+                    e.preventDefault();
+                    this.handleInputBlur(e);
                 }
-                
-                // 更新配置（临时）
-                window.prizeConfig.updatePrizeProbability(amount, probability);
-                
-                // 更新总计
-                this.updateTotalProbability();
             });
         });
+    }
+    
+    /**
+     * 处理输入变化
+     * @param {Event} e - 输入事件
+     */
+    handleInputChange(e) {
+        const amount = parseFloat(e.target.dataset.amount);
+        let probability = parseFloat(e.target.value);
+        
+        // 验证输入值
+        if (isNaN(probability) || probability < 0) {
+            probability = 0;
+        } else if (probability > 100) {
+            probability = 100;
+        }
+        
+        // 限制小数位数为1位
+        probability = Math.round(probability * 2) / 2;
+        
+        // 更新输入框显示
+        e.target.value = probability;
+        
+        // 更新提示文字
+        this.updateProbabilityHint(amount, probability);
+        
+        // 更新总计
+        this.updateTotalFromInputs();
+    }
+    
+    /**
+     * 处理输入框失去焦点
+     * @param {Event} e - 失焦事件
+     */
+    handleInputBlur(e) {
+        const amount = parseFloat(e.target.dataset.amount);
+        const probability = parseFloat(e.target.value) || 0;
+        
+        // 验证并修正值
+        const validProbability = Math.max(0, Math.min(100, probability));
+        e.target.value = validProbability;
+        
+        // 更新提示
+        this.updateProbabilityHint(amount, validProbability);
+        
+        // 保存到临时配置
+        this.saveTemporaryConfig(amount, validProbability);
+    }
+    
+    /**
+     * 更新概率提示
+     * @param {number} amount - 奖项金额
+     * @param {number} probability - 概率值
+     */
+    updateProbabilityHint(amount, probability) {
+        const input = document.querySelector(`.probability-input[data-amount="${amount}"]`);
+        if (!input) return;
+        
+        const hintDiv = input.closest('.prize-config').querySelector('.probability-hint span');
+        if (hintDiv) {
+            hintDiv.innerHTML = `当前: <strong>${probability}%</strong>`;
+        }
+    }
+    
+    /**
+     * 保存临时配置
+     * @param {number} amount - 奖项金额
+     * @param {number} probability - 概率值
+     */
+    saveTemporaryConfig(amount, probability) {
+        if (!this.tempProbabilities) {
+            this.tempProbabilities = {};
+        }
+        this.tempProbabilities[amount] = probability;
+    }
+    
+    /**
+     * 从输入框更新总计
+     */
+    updateTotalFromInputs() {
+        const inputs = document.querySelectorAll('.probability-input');
+        let total = 0;
+        
+        inputs.forEach(input => {
+            const probability = parseFloat(input.value) || 0;
+            total += probability;
+        });
+        
+        // 更新总计显示
+        const totalSpan = document.getElementById('total-probability');
+        if (totalSpan) {
+            totalSpan.textContent = total.toFixed(1);
+            
+            // 根据是否为100%改变颜色
+            if (Math.abs(total - 100) < 0.1) {
+                totalSpan.style.color = '#4CAF50';
+            } else {
+                totalSpan.style.color = '#F44336';
+            }
+        }
+    }
+    
+    /**
+     * 保存所有输入框的值
+     */
+    saveAllInputValues() {
+        try {
+            // 获取当前配置
+            const prizes = window.prizeConfig.getConfig();
+            
+            // 更新所有输入框的值到配置中
+            const updatedPrizes = prizes.map(prize => {
+                const newProbability = this.tempProbabilities ? this.tempProbabilities[prize.amount] : prize.probability;
+                return {
+                    ...prize,
+                    probability: newProbability
+                };
+            });
+            
+            // 批量更新配置
+            const success = window.prizeConfig.updateConfig(updatedPrizes);
+            
+            if (success) {
+                console.log('配置保存成功');
+            }
+        } catch (error) {
+            console.error('保存配置失败:', error);
+            this.showError('保存失败，请重试');
+        }
     }
     
     /**
@@ -495,8 +632,14 @@ class LotteryManager {
      * 保存设置
      */
     saveSettings() {
-        const stats = window.prizeConfig.getStatistics();
-        if (!stats.isValid) {
+        // 先保存所有输入框的值
+        this.saveAllInputValues();
+        
+        // 验证总概率
+        const totalSpan = document.getElementById('total-probability');
+        const total = parseFloat(totalSpan.textContent) || 0;
+        
+        if (Math.abs(total - 100) > 0.1) {
             this.showError('概率总和不等于100%，请调整后重试');
             return;
         }

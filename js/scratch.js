@@ -361,10 +361,18 @@ class ScratchCard {
         const dpr = window.devicePixelRatio || 1;
         
         if (e.touches && e.touches.length > 0) {
-            // 触摸事件
+            // 触摸事件 - 修复移动端位置计算
+            const touch = e.touches[0];
             return {
-                x: (e.touches[0].clientX - rect.left) * dpr,
-                y: (e.touches[0].clientY - rect.top) * dpr
+                x: (touch.clientX - rect.left) * dpr,
+                y: (touch.clientY - rect.top) * dpr
+            };
+        } else if (e.changedTouches && e.changedTouches.length > 0) {
+            // 兼容一些移动设备
+            const touch = e.changedTouches[0];
+            return {
+                x: (touch.clientX - rect.left) * dpr,
+                y: (touch.clientY - rect.top) * dpr
             };
         } else if (e.offsetX !== undefined) {
             // 鼠标事件
