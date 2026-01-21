@@ -352,6 +352,7 @@ class LotteryManager {
         // 确保Canvas本身居中
         canvas.style.margin = '0 auto';
         canvas.style.display = 'block';
+        canvas.style.position = 'relative';
         
         // 绘制背景（确保居中）
         const gradient = ctx.createLinearGradient(0, 0, width, height);
@@ -364,10 +365,10 @@ class LotteryManager {
         const centerX = Math.floor(width / 2);
         const centerY = Math.floor(height / 2);
         
-        // 绘制旋转的抽奖轮盘（确保居中）
-        const radius = Math.min(width, height) * 0.25; // 动态调整半径
+        // 绘制旋转的抽奖轮盘（确保居中且充满容器）
+        const radius = Math.min(width, height) * 0.4; // 增大半径，充满容器
         
-        // 背景圆（严格居中）
+        // 背景圆（严格居中，更大）
         ctx.beginPath();
         ctx.arc(centerX, centerY, radius, 0, Math.PI * 2);
         ctx.fillStyle = '#FFE082';
@@ -392,15 +393,21 @@ class LotteryManager {
             
             // 添加边框
             ctx.strokeStyle = 'white';
-            ctx.lineWidth = 2;
+            ctx.lineWidth = 3; // 增加边框宽度
             ctx.stroke();
             ctx.restore();
         }
         
         // 中心圆（严格居中）
         ctx.beginPath();
-        ctx.arc(centerX, centerY, radius * 0.25, 0, Math.PI * 2);
+        ctx.arc(centerX, centerY, radius * 0.2, 0, Math.PI * 2);
         ctx.fillStyle = 'white';
+        ctx.fill();
+        
+        // 添加中心点标记（确保居中）
+        ctx.beginPath();
+        ctx.arc(centerX, centerY, 3, 0, Math.PI * 2);
+        ctx.fillStyle = '#FF6B35';
         ctx.fill();
         
         // 添加闪光效果（居中覆盖）
@@ -408,6 +415,22 @@ class LotteryManager {
             const flashOpacity = (Math.random() * 0.3 + 0.2) * (progress - 0.8) * 5;
             ctx.fillStyle = `rgba(255, 255, 255, ${flashOpacity})`;
             ctx.fillRect(0, 0, width, height);
+        }
+        
+        // 添加调试信息（开发时可看到）
+        if (window.app && window.app.config && window.app.config.debug) {
+            ctx.save();
+            ctx.strokeStyle = 'red';
+            ctx.lineWidth = 1;
+            ctx.setLineDash([5, 5]);
+            // 绘制中心线
+            ctx.beginPath();
+            ctx.moveTo(centerX, 0);
+            ctx.lineTo(centerX, height);
+            ctx.moveTo(0, centerY);
+            ctx.lineTo(width, centerY);
+            ctx.stroke();
+            ctx.restore();
         }
     }
     
