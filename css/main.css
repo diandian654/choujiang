@@ -29,6 +29,12 @@ body {
   max-width: 1200px;
   margin: 0 auto;
   padding: 20px;
+  /* 确保整体垂直居中 */
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
 }
 
 .header {

@@ -56,6 +56,9 @@
   flex-direction: column;
   justify-content: center;
   align-items: center;
+  /* 确保PC端垂直居中 */
+  flex: 1;
+  width: 100%;
 }
 
 .lottery-main-card {
