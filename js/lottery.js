@@ -343,8 +343,8 @@ class LotteryManager {
     drawCountdownAnimation(canvas, progress) {
         const ctx = canvas.getContext('2d');
         const dpr = window.devicePixelRatio || 1;
-        const width = canvas.width / dpr;
-        const height = canvas.height / dpr;
+        const width = canvas.width;
+        const height = canvas.height;
         
         // 清除画布
         ctx.clearRect(0, 0, canvas.width, canvas.height);
