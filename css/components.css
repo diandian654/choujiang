@@ -51,12 +51,42 @@
 .lottery-container {
   text-align: center;
   padding: 2rem;
+  min-height: 400px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.lottery-main-card {
+  width: 100%;
+  max-width: 400px;
+  min-height: 350px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 2rem;
+  background: white;
+  border-radius: var(--border-radius);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+  margin-bottom: 2rem;
+  transition: all 0.3s ease;
+}
+
+.lottery-main-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
 }
 
 .scratch-card-wrapper {
   position: relative;
   display: inline-block;
   margin: 2rem 0;
+  min-height: 200px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 .scratch-canvas {
@@ -64,6 +94,7 @@
   box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
   cursor: crosshair;
   max-width: 100%;
+  background: linear-gradient(135deg, #4CAF50, #8BC34A);
 }
 
 /* 中奖结果显示 */
@@ -73,6 +104,44 @@
   background: linear-gradient(135deg, var(--accent-color), #FFF59D);
   border-radius: var(--border-radius);
   animation: bounce 0.6s ease-in-out;
+  min-width: 280px;
+}
+
+.lottery-status-text {
+  font-size: 1.2rem;
+  color: #666;
+  margin: 1rem 0;
+  font-weight: 500;
+  min-height: 2rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.progress-container {
+  width: 100%;
+  max-width: 300px;
+  margin: 1rem 0;
+  background: #f0f0f0;
+  border-radius: 20px;
+  overflow: hidden;
+  height: 8px;
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.progress-bar {
+  height: 100%;
+  background: linear-gradient(90deg, var(--primary-color), var(--secondary-color));
+  border-radius: 20px;
+  transition: width 0.3s ease;
+  box-shadow: 0 0 10px rgba(255, 107, 53, 0.3);
+}
+
+.progress-text {
+  font-size: 0.9rem;
+  color: var(--primary-color);
+  font-weight: bold;
+  margin-top: 0.5rem;
 }
 
 .prize-amount {

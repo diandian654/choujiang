@@ -78,6 +78,12 @@ class LotteryManager {
             confirmNoBtn.addEventListener('click', () => this.cancelLottery());
         }
         
+        // 历史记录切换按钮
+        const toggleHistoryBtn = document.getElementById('toggle-history');
+        if (toggleHistoryBtn) {
+            toggleHistoryBtn.addEventListener('click', () => this.toggleHistory());
+        }
+        
         // 清空历史按钮
         const clearHistoryBtn = document.getElementById('clear-history');
         if (clearHistoryBtn) {
@@ -247,24 +253,162 @@ class LotteryManager {
         
         if (!wrapper || !canvas || !statusText) return;
         
-        // 创建倒计时显示
-        let countdown = 2;
-        statusText.textContent = `正在开奖... ${countdown}`;
+        // 创建进度条容器
+        this.createProgressBar();
         
-        const countdownInterval = setInterval(() => {
-            countdown--;
-            if (countdown > 0) {
-                statusText.textContent = `正在开奖... ${countdown}`;
-            } else {
-                clearInterval(countdownInterval);
-                statusText.textContent = '开奖揭晓！';
-                this.showPrizeResult(this.currentPrize);
-                this.saveToHistory(this.currentPrize);
+        // 开始倒计时动画
+        this.animateCountdown(canvas);
+    }
+    
+    /**
+     * 创建进度条
+     */
+    createProgressBar() {
+        const wrapper = document.getElementById('scratch-wrapper');
+        if (!wrapper) return;
+        
+        // 创建进度条HTML
+        const progressHTML = `
+            <div class="countdown-container">
+                <div class="progress-container">
+                    <div class="progress-bar" id="lottery-progress" style="width: 0%"></div>
+                </div>
+                <div class="progress-text" id="progress-text">正在开奖...</div>
+            </div>
+        `;
+        
+        // 在wrapper内插入进度条
+        wrapper.insertAdjacentHTML('afterbegin', progressHTML);
+    }
+    
+    /**
+     * 动画倒计时
+     * @param {HTMLElement} canvas - Canvas元素
+     */
+    animateCountdown(canvas) {
+        let progress = 0;
+        const totalDuration = 2000; // 2秒
+        const startTime = Date.now();
+        const progressBar = document.getElementById('lottery-progress');
+        const progressText = document.getElementById('progress-text');
+        const statusText = document.getElementById('lottery-status');
+        
+        const animate = () => {
+            const elapsed = Date.now() - startTime;
+            progress = Math.min(elapsed / totalDuration, 1);
+            
+            // 更新进度条
+            if (progressBar) {
+                progressBar.style.width = `${progress * 100}%`;
             }
-        }, 1000);
+            
+            // 更新进度文字
+            if (progressText) {
+                const remaining = Math.ceil((1 - progress) * 2);
+                progressText.textContent = remaining > 0 ? `开奖倒计时: ${remaining}秒` : '即将揭晓...';
+            }
+            
+            // 添加Canvas动画
+            this.drawCountdownAnimation(canvas, progress);
+            
+            if (progress < 1) {
+                requestAnimationFrame(animate);
+            } else {
+                // 动画结束，显示结果
+                this.onCountdownComplete();
+            }
+        };
         
-        // 添加动画效果
-        this.addRevealAnimation(canvas);
+        animate();
+    }
+    
+    /**
+     * 绘制倒计时动画
+     * @param {HTMLElement} canvas - Canvas元素
+     * @param {number} progress - 进度(0-1)
+     */
+    drawCountdownAnimation(canvas, progress) {
+        const ctx = canvas.getContext('2d');
+        const dpr = window.devicePixelRatio || 1;
+        const width = canvas.width / dpr;
+        const height = canvas.height / dpr;
+        
+        // 清除画布
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        
+        // 绘制背景
+        const gradient = ctx.createLinearGradient(0, 0, width, height);
+        gradient.addColorStop(0, '#f0f0f0');
+        gradient.addColorStop(1, '#ffffff');
+        ctx.fillStyle = gradient;
+        ctx.fillRect(0, 0, width, height);
+        
+        // 绘制旋转的抽奖轮盘
+        const centerX = width / 2;
+        const centerY = height / 2;
+        const radius = 60;
+        
+        // 背景圆
+        ctx.beginPath();
+        ctx.arc(centerX, centerY, radius, 0, Math.PI * 2);
+        ctx.fillStyle = '#FFE082';
+        ctx.fill();
+        
+        // 绘制扇形
+        const colors = ['#FF6B35', '#4CAF50', '#2196F3', '#FF9800', '#9C27B0'];
+        const segments = 8;
+        
+        for (let i = 0; i < segments; i++) {
+            const startAngle = (i * Math.PI * 2 / segments) + (progress * Math.PI * 2);
+            const endAngle = ((i + 1) * Math.PI * 2 / segments) + (progress * Math.PI * 2);
+            
+            ctx.beginPath();
+            ctx.moveTo(centerX, centerY);
+            ctx.arc(centerX, centerY, radius, startAngle, endAngle);
+            ctx.closePath();
+            ctx.fillStyle = colors[i % colors.length];
+            ctx.fill();
+            
+            // 添加边框
+            ctx.strokeStyle = 'white';
+            ctx.lineWidth = 2;
+            ctx.stroke();
+        }
+        
+        // 中心圆
+        ctx.beginPath();
+        ctx.arc(centerX, centerY, 15, 0, Math.PI * 2);
+        ctx.fillStyle = 'white';
+        ctx.fill();
+        
+        // 添加闪光效果
+        if (progress > 0.8) {
+            const flashOpacity = (Math.random() * 0.3 + 0.2) * (progress - 0.8) * 5;
+            ctx.fillStyle = `rgba(255, 255, 255, ${flashOpacity})`;
+            ctx.fillRect(0, 0, width, height);
+        }
+    }
+    
+    /**
+     * 倒计时完成处理
+     */
+    onCountdownComplete() {
+        const progressText = document.getElementById('progress-text');
+        const statusText = document.getElementById('lottery-status');
+        
+        if (progressText) {
+            progressText.textContent = '🎉 开奖揭晓！';
+        }
+        
+        if (statusText) {
+            statusText.textContent = '恭喜你获得了奖励！';
+        }
+        
+        // 延迟显示结果
+        setTimeout(() => {
+            this.showPrizeResult(this.currentPrize);
+            this.saveToHistory(this.currentPrize);
+        }, 500);
     }
     
     /**
@@ -520,6 +664,33 @@ class LotteryManager {
             
             historyList.innerHTML = html;
             if (clearBtn) clearBtn.style.display = 'inline-block';
+        }
+    }
+    
+    /**
+     * 切换历史记录显示
+     */
+    toggleHistory() {
+        const container = document.getElementById('history-container');
+        const toggleBtn = document.getElementById('toggle-history');
+        
+        if (container && toggleBtn) {
+            if (container.style.display === 'none') {
+                // 显示历史记录
+                container.style.display = 'block';
+                toggleBtn.textContent = '隐藏抽奖历史';
+                toggleBtn.classList.remove('btn-secondary');
+                toggleBtn.classList.add('btn-primary');
+                
+                // 更新历史记录显示
+                this.updateHistoryDisplay();
+            } else {
+                // 隐藏历史记录
+                container.style.display = 'none';
+                toggleBtn.textContent = '查看抽奖历史';
+                toggleBtn.classList.remove('btn-primary');
+                toggleBtn.classList.add('btn-secondary');
+            }
         }
     }
     

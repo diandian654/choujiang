@@ -27,16 +27,16 @@
         <main class="main">
             <!-- 抽奖容器 -->
             <div class="lottery-container">
-                <div class="card">
+                <div class="lottery-main-card">
                     <h2>开始抽奖</h2>
-                    <p id="lottery-status">准备好接受奖励了吗？</p>
+                    <div class="lottery-status-text" id="lottery-status">准备好接受奖励了吗？</div>
                     
                     <!-- 抽奖按钮 -->
                     <button id="start-lottery" class="btn btn-primary">
                         开始抽奖
                     </button>
                     
-                    <!-- 刮刮乐区域 -->
+                    <!-- 开奖动画区域 -->
                     <div class="scratch-card-wrapper" id="scratch-wrapper" style="display: none;">
                         <canvas id="scratch-canvas" class="scratch-canvas" width="300" height="200"></canvas>
                     </div>
@@ -54,8 +54,13 @@
                     </button>
                 </div>
                 
+                <!-- 历史记录按钮 -->
+                <button id="toggle-history" class="btn btn-secondary" style="margin-top: 1rem;">
+                    查看抽奖历史
+                </button>
+                
                 <!-- 历史记录区域 -->
-                <div class="card">
+                <div id="history-container" class="card" style="display: none; margin-top: 2rem;">
                     <h3>我的抽奖历史</h3>
                     <div id="history-list" class="history-list">
                         <p style="color: #999; text-align: center;">暂无抽奖记录</p>

@@ -7,14 +7,14 @@ class PrizeConfig {
     constructor() {
         // 默认奖项配置
         this.defaultPrizes = [
-            { amount: 0, probability: 30, name: '谢谢参与', color: '#CCCCCC' },
-            { amount: 0.5, probability: 20, name: '小奖励', color: '#81C784' },
-            { amount: 1, probability: 20, name: '鼓励奖', color: '#64B5F6' },
-            { amount: 5, probability: 15, name: '进步奖', color: '#FFB74D' },
-            { amount: 10, probability: 10, name: '优秀奖', color: '#FF8A65' },
-            { amount: 20, probability: 3, name: '特别奖', color: '#BA68C8' },
-            { amount: 50, probability: 1.5, name: '超级奖', color: '#F06292' },
-            { amount: 100, probability: 0.5, name: '大奖', color: '#FFD54F' }
+            { amount: 0, probability: 5, name: '谢谢参与', color: '#CCCCCC' },
+            { amount: 0.5, probability: 25, name: '小奖励', color: '#81C784' },
+            { amount: 1, probability: 25, name: '鼓励奖', color: '#64B5F6' },
+            { amount: 5, probability: 20, name: '进步奖', color: '#FFB74D' },
+            { amount: 10, probability: 15, name: '优秀奖', color: '#FF8A65' },
+            { amount: 20, probability: 6, name: '特别奖', color: '#BA68C8' },
+            { amount: 50, probability: 3, name: '超级奖', color: '#F06292' },
+            { amount: 100, probability: 1, name: '大奖', color: '#FFD54F' }
         ];
         
         // 加载用户配置
