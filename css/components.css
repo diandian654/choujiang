@@ -72,6 +72,18 @@
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
   margin-bottom: 2rem;
   transition: all 0.3s ease;
+  /* 确保容器大小固定，不受内容变化影响 */
+  box-sizing: border-box;
+  overflow: hidden;
+}
+
+.lottery-main-card * {
+  box-sizing: border-box;
+}
+
+/* 确保内容居中时的最小高度 */
+.lottery-main-card > * {
+  flex-shrink: 0;
 }
 
 .lottery-main-card:hover {
@@ -381,6 +393,25 @@
     width: 100%;
     margin: 0.5rem 0;
   }
+  
+  .lottery-main-card {
+    max-width: 350px;
+    min-height: 320px;
+    padding: 1.5rem;
+  }
+  
+  .lottery-container {
+    padding: 1rem;
+    min-height: 350px;
+  }
+  
+  .progress-container {
+    max-width: 250px;
+  }
+  
+  .scratch-card-wrapper {
+    min-height: 180px;
+  }
 }
 
 @media (max-width: 480px) {
@@ -389,10 +420,76 @@
   }
   
   .lottery-container {
-    padding: 1rem;
+    padding: 0.5rem;
+    min-height: 320px;
   }
   
   .prize-amount {
     font-size: 2rem;
+  }
+  
+  .lottery-main-card {
+    max-width: 320px;
+    min-height: 300px;
+    padding: 1rem;
+  }
+  
+  .lottery-status-text {
+    font-size: 1rem;
+    min-height: 1.5rem;
+  }
+  
+  .progress-container {
+    max-width: 220px;
+    height: 6px;
+  }
+  
+  .progress-text {
+    font-size: 0.8rem;
+  }
+  
+  .scratch-canvas {
+    max-width: 280px;
+    height: 180px;
+  }
+  
+  .scratch-card-wrapper {
+    min-height: 160px;
+  }
+  
+  .prize-result {
+    padding: 1rem;
+    min-width: 240px;
+  }
+  
+  .btn {
+    padding: 10px 20px;
+    font-size: 1rem;
+  }
+}
+
+/* 超小屏幕适配 */
+@media (max-width: 360px) {
+  .lottery-main-card {
+    max-width: 300px;
+    min-height: 280px;
+    padding: 0.8rem;
+  }
+  
+  .lottery-container {
+    min-height: 300px;
+  }
+  
+  .scratch-canvas {
+    max-width: 260px;
+    height: 160px;
+  }
+  
+  .progress-container {
+    max-width: 200px;
+  }
+  
+  .prize-amount {
+    font-size: 1.8rem;
   }
 }

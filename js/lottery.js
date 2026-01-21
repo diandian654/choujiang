@@ -267,9 +267,12 @@ class LotteryManager {
         const wrapper = document.getElementById('scratch-wrapper');
         if (!wrapper) return;
         
+        // 先清除可能存在的旧进度条
+        this.clearProgressBar();
+        
         // 创建进度条HTML
         const progressHTML = `
-            <div class="countdown-container">
+            <div class="countdown-container" id="countdown-container">
                 <div class="progress-container">
                     <div class="progress-bar" id="lottery-progress" style="width: 0%"></div>
                 </div>
@@ -279,6 +282,16 @@ class LotteryManager {
         
         // 在wrapper内插入进度条
         wrapper.insertAdjacentHTML('afterbegin', progressHTML);
+    }
+    
+    /**
+     * 清除进度条
+     */
+    clearProgressBar() {
+        const existingContainer = document.getElementById('countdown-container');
+        if (existingContainer) {
+            existingContainer.remove();
+        }
     }
     
     /**
