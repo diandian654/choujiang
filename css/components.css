@@ -93,12 +93,14 @@
 
 .scratch-card-wrapper {
   position: relative;
-  display: inline-block;
-  margin: 2rem 0;
-  min-height: 200px;
   display: flex;
   justify-content: center;
   align-items: center;
+  margin: 2rem auto;
+  min-height: 200px;
+  width: 100%;
+  /* 确保Canvas容器水平居中 */
+  text-align: center;
 }
 
 .scratch-canvas {
@@ -107,6 +109,10 @@
   cursor: crosshair;
   max-width: 100%;
   background: linear-gradient(135deg, #4CAF50, #8BC34A);
+  /* Canvas居中优化 */
+  display: block;
+  margin: 0 auto;
+  position: relative;
 }
 
 /* 中奖结果显示 */
