@@ -349,25 +349,31 @@ class LotteryManager {
         // 清除画布
         ctx.clearRect(0, 0, canvas.width, canvas.height);
         
-        // 绘制背景
+        // 确保Canvas本身居中
+        canvas.style.margin = '0 auto';
+        canvas.style.display = 'block';
+        
+        // 绘制背景（确保居中）
         const gradient = ctx.createLinearGradient(0, 0, width, height);
         gradient.addColorStop(0, '#f0f0f0');
         gradient.addColorStop(1, '#ffffff');
         ctx.fillStyle = gradient;
         ctx.fillRect(0, 0, width, height);
         
-        // 绘制旋转的抽奖轮盘
-        const centerX = width / 2;
-        const centerY = height / 2;
-        const radius = 60;
+        // 精确计算中心点
+        const centerX = Math.floor(width / 2);
+        const centerY = Math.floor(height / 2);
         
-        // 背景圆
+        // 绘制旋转的抽奖轮盘（确保居中）
+        const radius = Math.min(width, height) * 0.25; // 动态调整半径
+        
+        // 背景圆（严格居中）
         ctx.beginPath();
         ctx.arc(centerX, centerY, radius, 0, Math.PI * 2);
         ctx.fillStyle = '#FFE082';
         ctx.fill();
         
-        // 绘制扇形
+        // 绘制扇形（围绕中心点）
         const colors = ['#FF6B35', '#4CAF50', '#2196F3', '#FF9800', '#9C27B0'];
         const segments = 8;
         
@@ -375,9 +381,11 @@ class LotteryManager {
             const startAngle = (i * Math.PI * 2 / segments) + (progress * Math.PI * 2);
             const endAngle = ((i + 1) * Math.PI * 2 / segments) + (progress * Math.PI * 2);
             
+            ctx.save();
+            ctx.translate(centerX, centerY);
             ctx.beginPath();
-            ctx.moveTo(centerX, centerY);
-            ctx.arc(centerX, centerY, radius, startAngle, endAngle);
+            ctx.moveTo(0, 0);
+            ctx.arc(0, 0, radius, startAngle, endAngle);
             ctx.closePath();
             ctx.fillStyle = colors[i % colors.length];
             ctx.fill();
@@ -386,15 +394,16 @@ class LotteryManager {
             ctx.strokeStyle = 'white';
             ctx.lineWidth = 2;
             ctx.stroke();
+            ctx.restore();
         }
         
-        // 中心圆
+        // 中心圆（严格居中）
         ctx.beginPath();
-        ctx.arc(centerX, centerY, 15, 0, Math.PI * 2);
+        ctx.arc(centerX, centerY, radius * 0.25, 0, Math.PI * 2);
         ctx.fillStyle = 'white';
         ctx.fill();
         
-        // 添加闪光效果
+        // 添加闪光效果（居中覆盖）
         if (progress > 0.8) {
             const flashOpacity = (Math.random() * 0.3 + 0.2) * (progress - 0.8) * 5;
             ctx.fillStyle = `rgba(255, 255, 255, ${flashOpacity})`;
